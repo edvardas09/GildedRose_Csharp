@@ -15,88 +15,69 @@ namespace csharp
         {   
             for (var i = 0; i < Items.Count; i++)
             {
-                //check if item name starts with "sulfuras"
-                if (!Items[i].Name.StartsWith("Sulfuras")) //if item is not sulfuras, do calculations
-                {
-                    //if item is not sulfuras, decrease SellIn value
-                    Items[i].SellIn -= 1;
+                if(Items[i].Name == "Aged Brie")
+                    AgedBrie(Items[i]);
+                else if (Items[i].Name == "Backstage passes to a TAFKAL80ETC concert")
+                    BackStagePasses(Items[i]);
+                else if (Items[i].Name == "Sulfuras, Hand of Ragnaros")
+                    LegendaryItem(Items[i]);
+                else if (Items[i].Name == "Conjured Mana Cake")
+                    Conjured(Items[i]);
+                else
+                    StandardItem(Items[i]);
+            }
+        }
 
-                    if (Items[i].SellIn < 0 && Items[i].Quality > -1) //if item's sell by date has passed and quality is above -1
-                    {
-                        //check if item's name starts with "Aged Brie"
-                        if (Items[i].Name == "Aged Brie" && Items[i].Quality < 50)
-                        {
-                            Items[i].Quality += 2;
-                        }
+        public void AgedBrie(Item item)
+        {
+            item.SellIn--;
+            if (item.Quality < 50) item.Quality++;
 
-                        //check if item's name starts with "Backstage passes"
-                        else if (Items[i].Name.StartsWith("Backstage passes"))
-                        {
-                            Items[i].Quality = 0;
-                        }
+            if(item.SellIn < 0 && item.Quality < 50) item.Quality++;
+        }
 
-                        //check if item's name starts with "Conjured"
-                        else if (Items[i].Name.StartsWith("Conjured"))
-                        {
-                            Items[i].Quality -= 4;
-                        }
-                        
-                        //for remaining items'
-                        else if (Items[i].Name != "Aged Brie")
-                        {
-                            Items[i].Quality -= 2;
-                        }
-                    }
+        public void BackStagePasses(Item item)
+        {
+            item.SellIn--;
 
-                    //if item quality between 0 and 50 and sell by date has not passed, change quality
-                    else if (Items[i].Quality > -1 && Items[i].Quality < 50)
-                    {
-                        //check if item's name starts with "Aged Brie"
-                        if (Items[i].Name == "Aged Brie")
-                        {
-                            Items[i].Quality += 1;
-                        }
+            if (item.Quality < 50) item.Quality++;
 
-                        //check if item's name starts with "Backstage passes"
-                        else if (Items[i].Name.StartsWith("Backstage passes"))
-                        {
-                            Items[i].Quality += 1; //always add 1 to quality
+            if (item.SellIn < 10)
+            {
+                if (item.Quality < 50) item.Quality++;
+            }
+            if (item.SellIn < 5)
+            {
+                if (item.Quality < 50) item.Quality++;
+            }
+            if (item.SellIn < 0)
+            {
+                item.Quality = 0;
+            }
+        }
 
-                            if (Items[i].SellIn < 10)
-                            {
-                                if (Items[i].Quality < 50)
-                                {
-                                    if (Items[i].SellIn < 5)
-                                    {
-                                        Items[i].Quality += 2; //if item's sell by date is less then 5, add 2 more to quality
-                                    }
-                                    else
-                                        Items[i].Quality += 1; //if item's sell by date is less then 10, but more then 5, add 1 more to quality
-                                }
-                            }
+        public void Conjured(Item item)
+        {
+            item.SellIn--;
 
-                        }
+            if (item.SellIn >= 0)
+                item.Quality -= 2;
 
-                        //check if item's name starts with "Conjured"
-                        else if (Items[i].Name.StartsWith("Conjured"))
-                        {
-                            Items[i].Quality -= 2;
-                        }
+        }
 
-                        //for other items'
-                        else
-                        {
-                            Items[i].Quality -= 1;
-                        }
-                    }
+        public void LegendaryItem(Item item)
+        {
+            item.SellIn = item.SellIn;
+            item.Quality = item.Quality;
+        }
 
-                    //just in case quality drops below 0
-                    if (Items[i].Quality < 0)
-                        Items[i].Quality = 0;
-                    //just in case quality rises above 50
-                    if (Items[i].Quality > 50)
-                        Items[i].Quality = 50;
-                }            
+        public void StandardItem(Item item)
+        {
+            item.SellIn--;
+            if (item.Quality > 0) item.Quality--;
+            if (item.SellIn < 0)
+            {
+                if (item.Quality > 0) item.Quality--;
             }
         }
     }
